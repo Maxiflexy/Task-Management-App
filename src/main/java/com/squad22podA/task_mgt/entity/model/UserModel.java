@@ -40,6 +40,6 @@ public class UserModel extends BaseClass{
     private boolean enabled = false;
 
     @OneToMany(mappedBy = "userModel", cascade = CascadeType.ALL)
-    private List<Task> taskList = new ArrayList<>();
+    private List<Task> taskList;
 
 }

@@ -30,7 +30,7 @@ public class Task extends BaseClass{
     private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private UserModel userModel;
 
 }

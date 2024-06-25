@@ -22,15 +22,15 @@ As a user, I want to be able to sign up for an account, So that I can access the
 
 i. Create tasks with specific details such as title, description, deadline, priority level (HIGH, MEDIUM, LOW, NONE) etc.
 
-ii. View details of a specific task by its title or ID.
+ii. View details of a specific task by its title or ID
 
 iii. View all tasks associated with a specific user
 
-iv. Edit a task successfully.
+iv. Edit a task successfully
 
 v. Delete a task successfully
 
-vi. Filter a task by their status e.g. (PENDING, IN_PROGRESS, COMPLETED).
+vi. Filter a task by their status e.g. (PENDING, IN_PROGRESS, COMPLETED)
 
 vii. View a list of completed tasks separately
 

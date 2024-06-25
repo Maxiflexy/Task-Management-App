@@ -66,5 +66,7 @@ public class UserModelServiceImpl implements UserModelService {
 
         emailService.sendEmailAlert(emailDetails);
 
+        System.out.println("Confirmation link "+ confirmationUrl);
+
     }
 }
