@@ -363,4 +363,5 @@ viii. I can log out of my account.
 
 ### FrontEnd view
 
-Consider working on the front-end as well
+Consider working on the front-end as well. Whereby the application
+will consume an api for the frontend application
