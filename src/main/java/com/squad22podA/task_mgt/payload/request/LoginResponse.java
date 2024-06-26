@@ -9,14 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class EmailDetails {
+public class LoginResponse {
+    private String responseCode;
 
-    private String recipient;
+    private String responseMessage;
 
-    private String messageBody;
-
-    private String subject;
-
-    private String attachment;
-
+    private LoginInfo loginInfo;
 }

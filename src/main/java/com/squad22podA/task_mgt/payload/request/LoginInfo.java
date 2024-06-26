@@ -1,4 +1,4 @@
-package com.squad22podA.task_mgt.payload.response;
+package com.squad22podA.task_mgt.payload.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserLoginResponse {
-
-    private String jwt;
-
+public class LoginInfo {
+    private String email;
+    private String token;
 }

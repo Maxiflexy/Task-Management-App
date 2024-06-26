@@ -1,8 +1,11 @@
 package com.squad22podA.task_mgt.service;
 
-import com.squad22podA.task_mgt.entity.model.Task;
+import com.squad22podA.task_mgt.payload.request.TaskRequest;
+import com.squad22podA.task_mgt.payload.response.TaskResponseDto;
 
 public interface TaskService {
 
-    Task createTask(String email, Task task);
+    TaskResponseDto createTask(String email, TaskRequest taskRequest);
+    TaskResponseDto editTask(String email, Long taskId, TaskRequest taskRequest);
+
 }

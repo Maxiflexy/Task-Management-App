@@ -1,15 +1,18 @@
 package com.squad22podA.task_mgt.service.impl;
 
+import com.squad22podA.task_mgt.config.JwtService;
+import com.squad22podA.task_mgt.entity.enums.Role;
 import com.squad22podA.task_mgt.entity.model.ConfirmationToken;
 import com.squad22podA.task_mgt.entity.model.UserModel;
 import com.squad22podA.task_mgt.exception.EmailAlreadyExistException;
-import com.squad22podA.task_mgt.payload.request.EmailDetails;
-import com.squad22podA.task_mgt.payload.request.UserRegistrationRequest;
+import com.squad22podA.task_mgt.payload.request.*;
 import com.squad22podA.task_mgt.repository.ConfirmationTokenRepository;
 import com.squad22podA.task_mgt.repository.UserModelRepository;
 import com.squad22podA.task_mgt.service.EmailService;
 import com.squad22podA.task_mgt.service.UserModelService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +28,10 @@ public class UserModelServiceImpl implements UserModelService {
     private final PasswordEncoder passwordEncoder;
     private final ConfirmationTokenRepository confirmationTokenRepository;
     private final EmailService emailService;
+
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
+
 
 
     @Override
@@ -45,7 +52,9 @@ public class UserModelServiceImpl implements UserModelService {
                                         .lastName(registrationRequest.getLastName())
                                         .email(registrationRequest.getEmail())
                                         .phoneNumber(registrationRequest.getPhoneNumber())
-                                        .password(passwordEncoder.encode(registrationRequest.getPassword())).build();
+                                        .password(passwordEncoder.encode(registrationRequest.getPassword()))
+                                        .role(Role.USER)
+                                        .build();
 
         UserModel savedUser = userModelRepository.save(newUser);
 
@@ -66,7 +75,30 @@ public class UserModelServiceImpl implements UserModelService {
 
         emailService.sendEmailAlert(emailDetails);
 
-        System.out.println("Confirmation link "+ confirmationUrl);
-
     }
+
+    @Override
+    public LoginResponse loginUser(LoginRequestDto loginRequestDto) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequestDto.getEmail(),
+                        loginRequestDto.getPassword()
+                )
+        );
+        UserModel user = userModelRepository.findByEmail(loginRequestDto.getEmail())
+                .orElseThrow();
+
+        var jwtToken = jwtService.generateToken(user);
+
+        return LoginResponse.builder()
+                .responseCode("002")
+                .responseMessage("Login Successfully")
+                .loginInfo(LoginInfo.builder()
+                        .email(user.getEmail())
+                        .token(jwtToken)
+                        .build())
+                .build();
+    }
+
+
 }
