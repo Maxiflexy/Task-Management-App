@@ -59,4 +59,11 @@ public class TaskController {
         }
         return ResponseEntity.ok(tasks);
     }
+
+    // get all task for a single user
+    @GetMapping("/get-all-task")
+    public ResponseEntity<List<TaskResponseDto>> getAllTask() {
+        String email = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+        return ResponseEntity.ok(taskService.getAllTask(email));
+    }
 }
