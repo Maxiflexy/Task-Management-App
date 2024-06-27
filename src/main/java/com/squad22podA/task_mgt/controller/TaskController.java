@@ -48,4 +48,15 @@ public class TaskController {
     public List<Task> getTasksByStatus(@PathVariable Status status) {
         return taskService.getTasksByStatus(status);
     }
+
+    //task status of a given user
+    @GetMapping("/status/{status}/user/{userId}")
+    public ResponseEntity<?> getTasksByStatusAndUserId(@PathVariable Status status, @PathVariable Long userId) {
+        List<Task> tasks = taskService.getTasksByStatusAndUserId(status, userId);
+        if (tasks.isEmpty()) {
+            String message = String.format("No %s tasks available now. Check later.", status.name().toLowerCase());
+            return ResponseEntity.ok(message);
+        }
+        return ResponseEntity.ok(tasks);
+    }
 }
