@@ -66,4 +66,13 @@ public class TaskController {
         String email = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
         return ResponseEntity.ok(taskService.getAllTask(email));
     }
+
+    // get task by task-id
+    @GetMapping("/get-task/{id}")
+    public ResponseEntity<TaskResponseDto> getTask(@PathVariable Long id) {
+
+        String email = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+        return ResponseEntity.ok(taskService.getTask(email, id));
+
+    }
 }
