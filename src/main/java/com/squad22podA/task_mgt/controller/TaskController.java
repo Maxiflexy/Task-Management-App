@@ -1,6 +1,8 @@
 package com.squad22podA.task_mgt.controller;
 
 
+import com.squad22podA.task_mgt.entity.enums.Status;
+import com.squad22podA.task_mgt.entity.model.Task;
 import com.squad22podA.task_mgt.payload.request.TaskRequest;
 import com.squad22podA.task_mgt.payload.response.TaskResponseDto;
 import com.squad22podA.task_mgt.service.TaskService;
@@ -10,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -37,5 +41,11 @@ public class TaskController {
 
         return ResponseEntity.ok(taskService.editTask(email, id, taskRequest));
 
+    }
+
+    // view all task by status
+    @GetMapping("/status/{status}")
+    public List<Task> getTasksByStatus(@PathVariable Status status) {
+        return taskService.getTasksByStatus(status);
     }
 }
