@@ -363,5 +363,4 @@ viii. I can log out of my account.
 
 ### FrontEnd view
 
-Consider working on the front-end as well. Whereby the application
-will consume an api for the frontend application
+Consumed Front-end Api for users to sign-up, confirm their mail and login to their dashboard from the browser.

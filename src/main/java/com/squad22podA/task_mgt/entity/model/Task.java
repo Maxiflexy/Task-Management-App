@@ -1,6 +1,7 @@
 package com.squad22podA.task_mgt.entity.model;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.squad22podA.task_mgt.entity.enums.PriorityLevel;
 import com.squad22podA.task_mgt.entity.enums.Status;
 import jakarta.persistence.*;
@@ -31,6 +32,7 @@ public class Task extends BaseClass{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private UserModel userModel;
 
 }

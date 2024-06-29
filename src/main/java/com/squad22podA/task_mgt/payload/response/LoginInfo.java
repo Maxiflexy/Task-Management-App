@@ -1,4 +1,4 @@
-package com.squad22podA.task_mgt.payload.request;
+package com.squad22podA.task_mgt.payload.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -43,6 +43,7 @@ public class TaskController {
 
     }
 
+
     // view all task by status
     @GetMapping("/status/{status}")
     public List<Task> getTasksByStatus(@PathVariable Status status) {
@@ -94,5 +95,6 @@ public class TaskController {
 
 
     }
+
 
 }

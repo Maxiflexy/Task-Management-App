@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
 
 @RequiredArgsConstructor
 @RestController
@@ -21,9 +22,9 @@ public class UserEmailConfirmationController {
 
         String result = tokenValidationService.validateToken(token);
         if ("Email confirmed successfully".equals(result)) {
-            return ResponseEntity.ok(result);
+            return ResponseEntity.ok(Collections.singletonMap("message", result));
         } else {
-            return ResponseEntity.badRequest().body(result);
+            return ResponseEntity.badRequest().body(Collections.singletonMap("message", result));
         }
 
     }

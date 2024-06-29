@@ -1,6 +1,7 @@
 package com.squad22podA.task_mgt.entity.model;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.squad22podA.task_mgt.entity.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -48,7 +49,11 @@ public class UserModel extends BaseClass implements UserDetails {
     private boolean enabled = false;
 
     @OneToMany(mappedBy = "userModel", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Task> taskList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "userModel")
+    private List<JToken> jtokens;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

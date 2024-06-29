@@ -68,7 +68,7 @@ public class JwtService {
         return (generateToken(new HashMap<>(), userDetails));
     }
 
-    // Check if token is valid
+    // Check if the token is valid
 
     public Boolean isTokenValid(String token, UserDetails userDetails){
         final String userName = extractUsername(token);

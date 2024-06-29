@@ -25,4 +25,5 @@ public interface TaskService {
     List<TaskResponseDto> getCompletedTask(String email);
 
     TaskResponseDto deleteTask(String email, Long taskId);
+
 }
