@@ -148,4 +148,19 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleTaskNotFoundException(TaskNotFoundOrWrongUserException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
+
+    // handle when a user attempts to log in without confirming the email
+    @ExceptionHandler(UserNotEnabledException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotEnabledException(UserNotEnabledException ex, WebRequest request) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .status(HttpStatus.FORBIDDEN.value())
+                .error("Forbidden")
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .path(request.getDescription(false))
+                .build();
+        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+    }
+
+
 }

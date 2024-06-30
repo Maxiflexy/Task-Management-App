@@ -87,6 +87,6 @@ public class UserModel extends BaseClass implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 }
