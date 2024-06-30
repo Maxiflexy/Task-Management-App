@@ -1,5 +1,6 @@
 package com.squad22podA.task_mgt.config;
 
+import com.squad22podA.task_mgt.exception.ExpiredJwtTokenException;
 import com.squad22podA.task_mgt.repository.JTokenRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -39,35 +40,40 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        // extract token from authHeader
+        try{
+            // extract token from authHeader
+            jwt = authHeader.substring(7);
+            // extract the email from the jwt service
+            userEmail = jwtService.extractUsername(jwt);
 
-        jwt = authHeader.substring(7);
+            if(userEmail != null &&
+                    SecurityContextHolder.getContext().getAuthentication() == null){
 
-        // extract the email from the jwt service
-        userEmail = jwtService.extractUsername(jwt);
+                UserDetails userDetails =
+                        this.userDetailsService.loadUserByUsername(userEmail);
+                var isTokenValid = jTokenRepository.findByToken(jwt)
+                        .map(t -> !t.isExpired() && !t.isRevoked())
+                        .orElse(false);
 
-        if(userEmail != null &&
-                SecurityContextHolder.getContext().getAuthentication() == null){
+                if(jwtService.isTokenValid(jwt, userDetails) && isTokenValid){
+                    UsernamePasswordAuthenticationToken authenticationToken =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities()
+                            );
+                    authenticationToken.setDetails(
+                            new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                }
 
-            UserDetails userDetails =
-                    this.userDetailsService.loadUserByUsername(userEmail);
-            var isTokenValid = jTokenRepository.findByToken(jwt)
-                    .map(t -> !t.isExpired() && !t.isRevoked())
-                    .orElse(false);
-
-            if(jwtService.isTokenValid(jwt, userDetails) && isTokenValid){
-                UsernamePasswordAuthenticationToken authenticationToken =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities()
-                        );
-                authenticationToken.setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
-
+            filterChain.doFilter(request, response);
+        } catch (ExpiredJwtTokenException e){
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT token expired");
         }
-        filterChain.doFilter(request, response);
+       catch (IOException | ServletException e) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT token is not valid");
+        }
     }
 }

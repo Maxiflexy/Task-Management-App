@@ -7,11 +7,14 @@ import com.squad22podA.task_mgt.entity.model.ConfirmationToken;
 import com.squad22podA.task_mgt.entity.model.JToken;
 import com.squad22podA.task_mgt.entity.model.UserModel;
 import com.squad22podA.task_mgt.exception.EmailAlreadyExistsException;
+import com.squad22podA.task_mgt.exception.UserNotFoundException;
 import com.squad22podA.task_mgt.payload.request.EmailDetails;
 import com.squad22podA.task_mgt.payload.request.LoginRequestDto;
 import com.squad22podA.task_mgt.payload.request.UserRegistrationRequest;
 import com.squad22podA.task_mgt.payload.response.LoginInfo;
 import com.squad22podA.task_mgt.payload.response.LoginResponse;
+import com.squad22podA.task_mgt.payload.response.UserProfileResponseDto;
+import com.squad22podA.task_mgt.payload.response.UserProfileResponseInfo;
 import com.squad22podA.task_mgt.repository.ConfirmationTokenRepository;
 import com.squad22podA.task_mgt.repository.JTokenRepository;
 import com.squad22podA.task_mgt.repository.UserModelRepository;
@@ -114,7 +117,7 @@ public class UserModelServiceImpl implements UserModelService {
                 )
         );
         UserModel user = userModelRepository.findByEmail(loginRequestDto.getEmail())
-                .orElseThrow();
+                .orElseThrow(() -> new UserNotFoundException("User not found with email: " + loginRequestDto.getEmail()));
 
         var jwtToken = jwtService.generateToken(user);
         revokeAllUserTokens(user);
@@ -128,6 +131,24 @@ public class UserModelServiceImpl implements UserModelService {
                         .token(jwtToken)
                         .build())
                 .build();
+    }
+
+    @Override
+    public UserProfileResponseDto fetchUserProfile(String email) {
+        UserModel user = userModelRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
+
+        return UserProfileResponseDto.builder()
+                .responseCode("success")
+                .responseMessage("Profile fetched Successfully")
+                .userProfileResponseInfo(UserProfileResponseInfo.builder()
+                        .firstName(user.getFirstName())
+                        .lastName(user.getLastName())
+                        .email(user.getEmail())
+                        .phoneNumber(user.getPhoneNumber())
+                        .build()
+                ).build();
+
     }
 
     private void saveUserToken(UserModel userModel, String jwtToken) {

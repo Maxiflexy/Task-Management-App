@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 public class TaskResponseInfo {
 
+    private Long id;
 
     private String title;
 

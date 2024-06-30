@@ -15,4 +15,6 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findByStatusAndUserModelId(Status status, Long userId);
 
     void deleteById(Long taskId);
+
+    List<Task> findByStatusAndUserModelEmail(Status status, String email);
 }

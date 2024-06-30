@@ -3,6 +3,7 @@ package com.squad22podA.task_mgt.controller;
 
 import com.squad22podA.task_mgt.entity.enums.Status;
 import com.squad22podA.task_mgt.entity.model.Task;
+import com.squad22podA.task_mgt.exception.TaskNotFoundOrWrongUserException;
 import com.squad22podA.task_mgt.payload.request.TaskRequest;
 import com.squad22podA.task_mgt.payload.response.TaskResponseDto;
 import com.squad22podA.task_mgt.service.TaskService;
@@ -27,28 +28,36 @@ public class TaskController {
     }
 
     @PostMapping("/new-task")
-    public ResponseEntity<TaskResponseDto> createTask(@Valid @RequestBody TaskRequest taskRequest) {
+    public ResponseEntity<?> createTask(@Valid @RequestBody TaskRequest taskRequest) {
         String email = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-        return ResponseEntity.ok(taskService.createTask(email, taskRequest));
+        try {
+            return ResponseEntity.ok(taskService.createTask(email, taskRequest));
+        } catch (Exception e) {
+            throw new TaskNotFoundOrWrongUserException("Something went Wrong: " + e.getMessage());
+        }
 
     }
 
     // edit the task
     @PutMapping("/edit-task/{id}")
-    public ResponseEntity<TaskResponseDto> editTask(@Valid @RequestBody TaskRequest taskRequest, @PathVariable Long id) {
+    public ResponseEntity<?> editTask(@Valid @RequestBody TaskRequest taskRequest, @PathVariable Long id) {
 
         String email = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
 
-        return ResponseEntity.ok(taskService.editTask(email, id, taskRequest));
+        try {
+            return ResponseEntity.ok(taskService.editTask(email, id, taskRequest));
+        } catch (Exception e) {
+            throw new TaskNotFoundOrWrongUserException("Something went Wrong: " + e.getMessage());
+        }
 
     }
 
 
     // view all task by status
-    @GetMapping("/status/{status}")
-    public List<Task> getTasksByStatus(@PathVariable Status status) {
-        return taskService.getTasksByStatus(status);
-    }
+//    @GetMapping("/status/{status}")
+//    public List<Task> getTasksByStatus(@PathVariable Status status) {
+//        return taskService.getTasksByStatus(status);
+//    }
 
     //task status of a given user
     @GetMapping("/status/{status}/user/{userId}")
@@ -68,13 +77,32 @@ public class TaskController {
         return ResponseEntity.ok(taskService.getAllTask(email));
     }
 
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<TaskResponseDto>> getTasksByStatusAndCurrentUser(@PathVariable Status status) {
+        // Retrieve authenticated user's email
+        String email = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+
+        // Retrieve tasks by status and user identifier (email)
+//        List<Task> tasks = taskService.getTasksByStatusAndUserEmail(status, email);
+
+//        if (tasks.isEmpty()) {
+//            String message = String.format("No %s tasks available now for user '%s'. Check later.", status.name().toLowerCase(), email);
+//            return ResponseEntity.ok(message);
+//        }
+
+        return ResponseEntity.ok(taskService.getTasksByStatusAndUserEmail(status, email));
+    }
+
     // get task by task-id
     @GetMapping("/get-task/{id}")
     public ResponseEntity<TaskResponseDto> getTask(@PathVariable Long id) {
 
         String email = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-        return ResponseEntity.ok(taskService.getTask(email, id));
-
+        try {
+            return ResponseEntity.ok(taskService.getTask(email, id));
+        } catch (Exception e) {
+            throw new TaskNotFoundOrWrongUserException("Something went Wrong: " + e.getMessage());
+        }
     }
 
     // get by completed task
@@ -85,16 +113,11 @@ public class TaskController {
     }
 
     // delete a task
-
     @DeleteMapping("/delete-task/{id}")
     public ResponseEntity<TaskResponseDto> deleteTask(@PathVariable Long id) {
 
         String email = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
 
         return ResponseEntity.ok(taskService.deleteTask(email, id));
-
-
     }
-
-
 }

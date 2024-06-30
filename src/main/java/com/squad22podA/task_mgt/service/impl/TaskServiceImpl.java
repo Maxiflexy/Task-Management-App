@@ -38,8 +38,9 @@ public class TaskServiceImpl implements TaskService {
     public TaskResponseDto createTask(String email, TaskRequest taskRequest) {
         Optional<UserModel> optionalUser = userModelRepository.findByEmail(email);
         if(optionalUser.isEmpty()) {
-            throw  new RuntimeException();
+            throw  new RuntimeException("User not found");
         }
+
 
         // get the actual user
         UserModel user = optionalUser.get();
@@ -76,13 +77,14 @@ public class TaskServiceImpl implements TaskService {
     public TaskResponseDto editTask(String email, Long taskId, TaskRequest taskRequest) {
         Optional<Task> optionalTask = taskRepository.findById(taskId);
         if(optionalTask.isEmpty()) {
-            throw  new RuntimeException();
+            throw  new RuntimeException("Task not found");
         }
         Task task = optionalTask.get();
 
         if (!task.getUserModel().getEmail().equals(email)) {
             throw new RuntimeException("You do not have permission to edit this task");
         }
+
 
         task.setTitle(taskRequest.getTitle());
         task.setDescription(taskRequest.getDescription());
@@ -120,6 +122,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<TaskResponseDto> getAllTask(String email) {
         List<Task> tasks = taskRepository.findAll();
+//        System.out.println("not filtered" + tasks);
 
         // Get all task
         return tasks.stream()
@@ -128,6 +131,7 @@ public class TaskServiceImpl implements TaskService {
                         .responseCode("006")
                         .responseMessage("Get all Task was a Success")
                         .taskResponseInfo(TaskResponseInfo.builder()
+                                .id(task.getId())
                                 .title(task.getTitle())
                                 .description(task.getDescription())
                                 .deadline(task.getDeadline())
@@ -139,10 +143,34 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public List<TaskResponseDto> getTasksByStatusAndUserEmail(Status status, String email) {
+        // Implement retrieval of tasks by status and user identifier
+        List<Task> tasks = taskRepository.findByStatusAndUserModelEmail(status, email);
+
+        // return all tasks by status
+        return tasks.stream()
+                .filter(task -> task.getUserModel().getEmail().equals(email))
+                .map(task -> TaskResponseDto.builder()
+                        .responseCode("009")
+                        .responseMessage("Get all Filtered Task was a Success")
+                        .taskResponseInfo(TaskResponseInfo.builder()
+                                .id(task.getId())
+                                .title(task.getTitle())
+                                .description(task.getDescription())
+                                .deadline(task.getDeadline())
+                                .priorityLevel(task.getPriorityLevel())
+                                .status(task.getStatus())
+                                .build())
+                        .build())
+                .collect(Collectors.toList());
+//        return taskRepository.findByStatusAndUserModelEmail(status, email);
+    }
+
+    @Override
     public TaskResponseDto getTask(String email, Long taskId) {
         Optional<Task> optionalTask = taskRepository.findById(taskId);
         if(optionalTask.isEmpty()) {
-            throw  new RuntimeException();
+            throw  new RuntimeException("Task not found");
         }
         Task task = optionalTask.get();
 
@@ -155,6 +183,7 @@ public class TaskServiceImpl implements TaskService {
                 .responseCode("004")
                 .responseMessage("Get Task was a Success")
                 .taskResponseInfo(TaskResponseInfo.builder()
+                        .id(task.getId())
                         .title(task.getTitle())
                         .description(task.getDescription())
                         .deadline(task.getDeadline())
@@ -176,6 +205,7 @@ public class TaskServiceImpl implements TaskService {
                         .responseCode("005")
                         .responseMessage("Get Task by Status was a Success")
                         .taskResponseInfo(TaskResponseInfo.builder()
+                                .id(task.getId())
                                 .title(task.getTitle())
                                 .description(task.getDescription())
                                 .deadline(task.getDeadline())
@@ -207,4 +237,6 @@ public class TaskServiceImpl implements TaskService {
                 .responseMessage("Task Delete successful")
                 .build();
     }
+
+
 }

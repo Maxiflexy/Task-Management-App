@@ -1,5 +1,6 @@
 package com.squad22podA.task_mgt.payload.response;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,10 +10,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class  LoginResponse {
+public class UserProfileResponseDto {
     private String responseCode;
 
     private String responseMessage;
 
-    private LoginInfo loginInfo;
+    private UserProfileResponseInfo userProfileResponseInfo;
+
 }
