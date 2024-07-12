@@ -137,6 +137,7 @@ public class TaskServiceImpl implements TaskService {
                                 .deadline(task.getDeadline())
                                 .priorityLevel(task.getPriorityLevel())
                                 .status(task.getStatus())
+                                .createdAt(task.getCreatedAt())
                                 .build())
                         .build())
                 .collect(Collectors.toList());
