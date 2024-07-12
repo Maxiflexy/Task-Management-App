@@ -24,14 +24,14 @@ public class JwtService {
     // Extract all claims
     private Claims extractAllClaims(String token){
 
-                return Jwts
-                        .parser()
-                        .setSigningKey(getSignInKey())
-                        .build()
-                        .parseClaimsJws(token)
-                        .getBody();
+        return Jwts
+                .parser()
+                .setSigningKey(getSignInKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
 
-        }
+    }
 
 
     private Key getSignInKey() {
@@ -80,6 +80,7 @@ public class JwtService {
 
     private boolean isTokenExpired(String token) {
         return  extractExpiration(token).before(new Date());
+
     }
 
     private Date extractExpiration(String token){
