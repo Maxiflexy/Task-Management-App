@@ -22,15 +22,12 @@ public class ApplicationConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder(){
-
-
-
-
         return new BCryptPasswordEncoder();
     }
 
     @Bean
     public UserDetailsService userDetailsService(){
+
         return username -> userModelRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
